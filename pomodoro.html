@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="main">Pomodoro Clock / Relógio Pomodoro</title>
+    <link rel="icon" href="icone.jpg">
+    
+    <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
+    <audio src="Beep.mp3" id="buzzer" preload="auto"></audio>
+    
+</head>
+
+<style>
+
+body{
+    background-color:#ffa900;
+    text-align: center;
+    margin: 3;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+#title1{
+    color: blue;
+    font-size: 50px;
+    font-family:'Courier New', Courier, monospace;
+    text-align: center;
+    margin: 3px;
+}
+
+#title2{
+    color: blue;
+    font-size: 50px;
+    font-family: 'Courier New', Courier, monospace;
+    text-align: center;
+    margin: 3px;
+}
+
+h1, h3{
+    color: blue;
+    font-size: 65px;
+    text-align: center;
+    font-family: 'Courier New', Courier, monospace;
+    position: relative;
+}
+.btn{
+  background-color: #555555;
+  border: 2px solid blue;
+  color: white;
+  padding: 12px 28px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  margin: 2px 2px;
+  transition-duration: 0.6s;
+  cursor: pointer;
+  position: absolute;
+  
+}
+.btn:hover {
+  background-color:blue;
+  color: white;
+}
+
+#start::first-letter{
+    font-size: 30px;
+}
+
+#addClock{
+    margin: 0;
+    position: absolute;
+    top: 65%;
+    left: 40%;
+    margin-right: -60%;
+    transform: translate(-50%, -50%) }
+
+#minusClock{
+    margin: 0;
+    position: absolute;
+    top: 65%;
+    left: 60%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%) }
+
+#addBreak{
+    margin: 0;
+    position: absolute;
+    top: 90%;
+    left: 40%;
+    margin-right: -60%;
+    transform: translate(-50%, -50%) 
+}
+#minusBreak{
+    margin: 0;
+    position: absolute;
+    top: 90%;
+    left: 60%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%) 
+}
+#start{
+    margin: 0;
+    top: 24%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+}
+footer{
+    text-align: center;
+    position: absolute;
+    top: 100%;
+    margin: 0px;
+}
+
+.timeDiv, .breakDiv{
+    
+    padding: 10px;
+    box-shadow: 3px 5px 3px 2px black;
+}
+
+
+</style>
+
+
+<body>
+    <div class="text-center">
+        <h1>Pomodoro Clock / Relógio Pomodoro</h1>
+        <h3>Técnica Pomodoro para Estudo</h3>
+        <div class="timeDiv">
+           <h1 id="title1">Tempo de Estudo</h1> 
+           <a href="#" class="btn btn-primary" id="addClock">+</a>
+           <h2 id="timeType"></h2>
+           <h2 id="num">25</h2>
+           <a href="#" class="btn btn-primary" id="minusClock">-</a>
+           <a href="#" class="btn btn-primary" id="reset">Reset</a>
+           
+        </div>
+        <div class="breakDiv">
+            <div class="timeDiv">
+                <h1 id="title2">Tempo de Parada</h1> 
+                <a href="#" class="btn btn-primary" id="addBreak">+</a>
+                <h2 id="breakNum">5</h2>
+                <a href="#" class="btn btn-primary" id="minusBreak">-</a>
+                <a href="#" class="btn btn-primary" id="start">Start</a>
+
+        </div>
+    </div>
+    <footer id="rodape">
+        A Técnica Pomodoro é um método de gerenciamento de tempo desenvolvido por Francesco Cirillo no final dos anos 1980. A técnica consiste na utilização de um cronômetro para dividir o trabalho em períodos de 25 minutos, separados por breves intervalos.
+    </footer>
+    </div>
+
+<script >
+      $(document).ready(function(){
+        $("#reset").hide()
+          var buzzer = $("#buzzer")[0];
+          /*Serve para modificar o conteúdo para inteiro e obter o conteúdo em HTML do elemento*/
+          var count = parseInt($("#num").html());
+          var breakTime = parseInt($("#breakNum").html());
+          console.log(count);
+
+
+    $("#start").click(function(){
+        var counter = setInterval(timer, 1000)
+        count*=60;
+
+        function timer(){
+            $("#start, #addClock, #minusClock, #addBreak, #minusBreak, #breakNum, #title1, #title2, #rodape").hide()
+            $("#timeType").show();
+            $("#timeType").html("Tempo Restante de Estudo: ");
+            
+            
+            count-=1;
+            if(count === 0){ 
+                buzzer.play();
+                clearInterval(counter);
+                breakTime*=60;
+                var startBreak = setInterval(breakTimer, 1000);
+                $("#num").hide();
+                
+            }
+            if(count%60 >=10 ){
+                $("#num").html(Math.floor(count/60)+":"+count%60);
+
+            }else{
+                $("#num").html(Math.floor(count/60)+":"+"0"+count%60);
+            }
+            
+            
+
+            /*$("#num").html(count)*/
+
+
+            function breakTimer(){
+            $("#timeType").html("Tempo Restante de Parada: ");
+            $("#breakNum").show();
+            $("#timeType").show();
+            
+            breakTime -= 1;
+            if(breakTime ===0){
+                
+                clearInterval(startBreak)
+                buzzer.play();
+                $("#reset").show();
+                $("#breakNum, #timeType").hide()
+            }
+
+            if(breakTime%60 >=10 ){
+                $("#breakNum").html(Math.floor(breakTime/60)+":"+breakTime%60);
+
+            }else{
+                $("#breakNum").html(Math.floor(breakTime/60)+":"+"0"+breakTime%60);
+            }
+
+            /*$("#breakNum").html(breakTime)*/
+        }
+        }
+        
+    });
+
+    $("#reset").click(function(){
+        count = 25;
+        breakTime = 5;
+        $("#num").html(count)
+        $("#breakNum").html(breakTime)
+        $("#start, #minusClock, #addClock, #addBreak, #minusBreak, #breakNum, #num, #title1, #title2").show()
+        $("#reset, #timeType").hide()
+        
+    })
+          
+
+    $("#minusClock").click(function(){
+
+        if(count>1){
+            count -=1;
+            $("#num").html(count);
+            console.log(count);
+        }
+    });
+
+    $("#addClock").click(function(){
+
+        if(count>=1){
+            count +=1;
+            $("#num").html(count);
+            console.log(count);
+}
+});
+
+$("#minusBreak").click(function(){
+
+if(breakTime>1){
+    breakTime -=1;
+    $("#breakNum").html(breakTime);
+    console.log(breakTime);
+}
+});
+
+$("#addBreak").click(function(){
+
+if(breakTime>=1){
+    breakTime +=1;
+    $("#breakNum").html(breakTime);
+    console.log(breakTime);
+}
+});
+
+      })
+        
+</script>
+    
+</body>
+</html>
