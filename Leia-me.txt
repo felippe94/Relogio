@@ -1,0 +1,1 @@
+Relógio Pomodoro com um layout simples para auxiliar nos estudos.
